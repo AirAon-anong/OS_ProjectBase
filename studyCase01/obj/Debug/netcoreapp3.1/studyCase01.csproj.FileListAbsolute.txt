@@ -1,4 +1,0 @@
-E:\work3.1\OS\OS_ProjectBase\studyCase01\obj\Debug\netcoreapp3.1\studyCase01.csprojAssemblyReference.cache
-E:\work3.1\OS\OS_ProjectBase\studyCase01\obj\Debug\netcoreapp3.1\studyCase01.AssemblyInfoInputs.cache
-E:\work3.1\OS\OS_ProjectBase\studyCase01\obj\Debug\netcoreapp3.1\studyCase01.AssemblyInfo.cs
-E:\work3.1\OS\OS_ProjectBase\studyCase01\obj\Debug\netcoreapp3.1\studyCase01.csproj.CoreCompileInputs.cache
