@@ -1,0 +1,16 @@
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\studyCase01.exe
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\studyCase01.deps.json
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\studyCase01.runtimeconfig.json
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\studyCase01.runtimeconfig.dev.json
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\studyCase01.dll
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\ref\studyCase01.dll
+D:\WorkSpace\OS_ProjectBase\studyCase01\bin\Debug\net5.0\studyCase01.pdb
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.csproj.AssemblyReference.cache
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.GeneratedMSBuildEditorConfig.editorconfig
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.AssemblyInfoInputs.cache
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.AssemblyInfo.cs
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.csproj.CoreCompileInputs.cache
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.dll
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\ref\studyCase01.dll
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.pdb
+D:\WorkSpace\OS_ProjectBase\studyCase01\obj\Debug\net5.0\studyCase01.genruntimeconfig.cache
