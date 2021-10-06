@@ -33,7 +33,7 @@ namespace Problem01
                 fs.Close();
             }
 
-            return returnData;;;;;
+            return returnData;
         }
         static void Sum()
         {
