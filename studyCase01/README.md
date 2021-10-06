@@ -9,7 +9,5 @@
 
 #### Mo's Runtime
 
-```
-Summation result: 888701676
-Time used: 22236 ms
-```
+- Summation result: 888701676
+- Time used: 22236ms
