@@ -11,7 +11,8 @@ namespace Problem01
     {
         static byte[] Data_Global = new byte[1000000000];
         static long Sum_Global = 0;
-        static int G_index = 0;
+        // static int G_index = 0;
+
 
         static int ReadData()
         {
@@ -35,32 +36,37 @@ namespace Problem01
 
             return returnData;
         }
-        static void Sum()
+        static void Sum(int startIndex, int stopIndex)
         {
-            if (Data_Global[G_index] % 2 == 0)
+            while(startIndex < stopIndex)
             {
-                Sum_Global -= Data_Global[G_index];
+              if (Data_Global[startIndex] % 2 == 0)
+              {
+                  Sum_Global -= Data_Global[startIndex];
+              }
+              else if (Data_Global[startIndex] % 3 == 0)
+              {
+                  Sum_Global += (Data_Global[startIndex] * 2);
+              }
+              else if (Data_Global[startIndex] % 5 == 0)
+              {
+                  Sum_Global += (Data_Global[startIndex] / 2);
+              }
+              else if (Data_Global[startIndex] % 7 == 0)
+              {
+                  Sum_Global += (Data_Global[startIndex] / 3);
+
+              }
+              Data_Global[startIndex] = 0;
+              startIndex++;
             }
-            else if (Data_Global[G_index] % 3 == 0)
-            {
-                Sum_Global += (Data_Global[G_index] * 2);
-            }
-            else if (Data_Global[G_index] % 5 == 0)
-            {
-                Sum_Global += (Data_Global[G_index] / 2);
-            }
-            else if (Data_Global[G_index] % 7 == 0)
-            {
-                Sum_Global += (Data_Global[G_index] / 3);
-            }
-            Data_Global[G_index] = 0;
-            G_index++;
+
         }
         static void Main(string[] args)
         {
             Stopwatch sw = new();
             int i, y;
-
+            int dataLength = Data_Global.Length;
             /* Read data from file */
             Console.Write("Data read...");
             y = ReadData();
@@ -73,11 +79,25 @@ namespace Problem01
                 Console.WriteLine("Read Failed!");
             }
 
+            Thread th1 = new Thread(() => Sum(0, 250000000));
+            Thread th2 = new Thread(() => Sum(250000000, 500000000));
+            Thread th3 = new Thread(() => Sum(500000000, 750000000));
+            Thread th4 = new Thread(() => Sum(750000000, 1000000000));
+
             /* Start */
             Console.Write("\n\nWorking...");
             sw.Start();
-            for (i = 0; i < 1000000000; i++)
-                Sum();
+
+            th1.Start();
+            th2.Start();
+            th3.Start();
+            th4.Start();
+
+            th1.Join();
+            th2.Join();
+            th3.Join();
+            th4.Join();
+
             sw.Stop();
             Console.WriteLine("Done.");
 
