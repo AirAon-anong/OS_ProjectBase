@@ -148,7 +148,7 @@ sw.Stop();
 
 ## Version 3 (Right Answer, Less time)
 
-update from version 2, use the local variables and add the static variable only for the last statement.
+update from version 1, use the local variables and add the static variable only for the last statement.
 
 สมมติฐาน : การเปลี่ยนให้ algorithm ให้ thread แต่ละ thread บวกลบกับค่า local variable ไว้ก่อนเมื่อบวกลบครบทุก index ที่ได้รับมอบหมายแล้วนำค่าไปบวก static variable ทีเดียว จะสามารถลดเวลาในการทำงานได้
 
