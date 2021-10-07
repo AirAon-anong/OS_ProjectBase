@@ -145,3 +145,72 @@ sw.Stop();
 #### Mo's Runtime
 - Summation result: 95658994
 - Time used: 9504ms
+
+## Version 3 (Right Answer, Less time)
+
+update from version 2, use the local variables and add the static variable only for the last statement.
+
+สมมติฐาน : การเปลี่ยนให้ algorithm ให้ thread แต่ละ thread บวกลบกับค่า local variable ไว้ก่อนเมื่อบวกลบครบทุก index ที่ได้รับมอบหมายแล้วนำค่าไปบวก static variable ทีเดียว จะสามารถลดเวลาในการทำงานได้
+
+ผลลัพธ์ : ลดเวลาได้ และ ทำงานถูกต้อง
+
+```
+static void Sum(int startIndex, int stopIndex)
+{
+    int result = 0;
+
+    while(startIndex < stopIndex)
+    {
+      if (Data_Global[startIndex] % 2 == 0)
+      {
+          result -= Data_Global[startIndex];
+
+      }
+      else if (Data_Global[startIndex] % 3 == 0)
+      {
+          result += (Data_Global[startIndex] * 2);
+
+      }
+      else if (Data_Global[startIndex] % 5 == 0)
+      {
+          result += (Data_Global[startIndex] / 2);
+
+      }
+      else if (Data_Global[startIndex] % 7 == 0)
+      {
+          result += (Data_Global[startIndex] / 3);
+      }
+      Data_Global[startIndex] = 0;
+      startIndex++;
+
+
+    }
+    Sum_Global += result;
+}
+```
+
+```
+Thread th1 = new Thread(() => Sum(0, 250000000));
+Thread th2 = new Thread(() => Sum(250000000, 500000000));
+Thread th3 = new Thread(() => Sum(500000000, 750000000));
+Thread th4 = new Thread(() => Sum(750000000, 1000000000));
+
+sw.Start();
+
+th1.Start();
+th2.Start();
+th3.Start();
+th4.Start();
+
+th1.Join();
+th2.Join();
+th3.Join();
+th4.Join();
+
+sw.Stop();
+```
+
+#### Mo's Runtime
+
+- Summation result: 888701676
+- Time used: 5870ms
