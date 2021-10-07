@@ -13,6 +13,13 @@ namespace Problem01
         static long Sum_Global = 0;
         // static int G_index = 0;
 
+        static int checkCount = 0;
+        static int processedCounter = 0;
+        static int workingCounter = 0;
+        const int workingLimit = 10;
+        const int THREADINDEX_LIMIT = 10000000;
+        static int currentIndex = 0;
+
         static int ReadData()
         {
             int returnData = 0;
@@ -37,6 +44,8 @@ namespace Problem01
         }
         static void Sum(int startIndex, int stopIndex)
         {
+            checkCount++;
+
             while(startIndex < stopIndex)
             {
               if (Data_Global[startIndex] % 2 == 0)
@@ -58,6 +67,8 @@ namespace Problem01
               Data_Global[startIndex] = 0;
               startIndex++;
             }
+            processedCounter++;
+            workingCounter--;
         }
         static void Main(string[] args)
         {
@@ -75,23 +86,27 @@ namespace Problem01
             {
                 Console.WriteLine("Read Failed!");
             }
-            Thread th1 = new Thread(() => Sum(0, 250000000));
-            Thread th2 = new Thread(() => Sum(250000000, 500000000));
-            Thread th3 = new Thread(() => Sum(500000000, 750000000));
-            Thread th4 = new Thread(() => Sum(750000000, 1000000000));
             /* Start */
             Console.Write("\n\nWorking...");
             sw.Start();
 
-            th1.Start();
-            th2.Start();
-            th3.Start();
-            th4.Start();
-
-            th1.Join();
-            th2.Join();
-            th3.Join();
-            th4.Join();
+            while(currentIndex < 1000000000)
+            {
+                //wait for free limit...
+                while (workingCounter >= workingLimit)
+                {
+                    Thread.Sleep(1);
+                }
+                workingCounter += 1;
+                Thread th = new Thread(() => Sum( currentIndex , currentIndex + THREADINDEX_LIMIT ));
+                th.Start();
+                Thread.Sleep(1);
+                currentIndex += THREADINDEX_LIMIT;
+            }
+            while (processedCounter < checkCount)
+            {
+                Thread.Sleep(1);
+            }
 
             sw.Stop();
             Console.WriteLine("Done.");
