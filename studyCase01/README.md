@@ -214,3 +214,306 @@ sw.Stop();
 
 - Summation result: 888701676
 - Time used: 5870ms
+
+## Version 4
+
+ลองใช้ lock statement มีผลให้เมื่อ thread นึงที่กำลังใช้งาน code ส่วนที่อยู่ใน lock thread อื่นๆนอกเหนือจากนั้นจะถูก block ต้องรอจนกว่า thread ที่ใช้งานอยู่ release lock หรือทำงานเสร็จนั้นเอง
+
+โดย version นี้ใช้ G_index ในการทำซึ่งมีความเสี่ยงต่อการจะเกิด IndexOutOfRangeException
+
+สมมติฐาน : การใช้ lock statement ช่วยให้ลดเวลาในการทำงานและทำให้ผลลัพธ์ถูกต้อง
+
+ผลลัพธ์ : ผลลัพธ์ถูกต้อง ใช้เวลามากขึ้น
+
+```
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+
+namespace Problem01
+{
+    class Summation
+    {
+        private object myLocker = new object();
+        static long Sum_Global = 0;
+        static int G_index = 0;
+
+        public long SumGlobal // Encapsulation
+        {
+            get { return Sum_Global; }
+            set { Sum_Global = value; }
+        }
+
+        public void Sum(byte[] Data_Global)
+        {
+            while(G_index < 1000000000)
+            {
+                lock(myLocker)
+                {
+                    if (G_index < 1000000000)
+                    {
+                        if (Data_Global[G_index] % 2 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global -= Data_Global[G_index];
+                            }
+
+                        }
+                        else if (Data_Global[G_index] % 3 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global += (Data_Global[G_index] * 2);
+                            }
+
+                        }
+                        else if (Data_Global[G_index] % 5 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global += (Data_Global[G_index] / 2);
+                            }
+
+                        }
+                        else if (Data_Global[G_index] % 7 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global += (Data_Global[G_index] / 3);
+                            }
+
+                        }
+                        Data_Global[G_index] = 0;
+                        G_index++;
+                    }
+
+                }
+            }
+        }
+    }
+
+    class Program
+    {
+        static byte[] Data_Global = new byte[1000000000];
+
+        // static int G_index = 0;
+
+
+        static int ReadData()
+        {
+            int returnData = 0;
+            FileStream fs = new("Problem01.dat", FileMode.Open);
+            BinaryFormatter bf = new();
+
+            try
+            {
+                Data_Global = (byte[])bf.Deserialize(fs);
+            }
+            catch (SerializationException se)
+            {
+                Console.WriteLine("Read Failed:" + se.Message);
+                returnData = 1;
+            }
+            finally
+            {
+                fs.Close();
+            }
+
+            return returnData;
+        }
+
+        static void Main(string[] args)
+        {
+            Stopwatch sw = new();
+            Summation sumc = new();
+
+            int y;
+            /* Read data from file */
+            Console.Write("Data read...");
+            y = ReadData();
+            if (y == 0)
+            {
+                Console.WriteLine("Complete.");
+            }
+            else
+            {
+                Console.WriteLine("Read Failed!");
+            }
+
+            Thread th1 = new Thread(() => sumc.Sum(Data_Global));
+            Thread th2 = new Thread(() => sumc.Sum(Data_Global));
+            Thread th3 = new Thread(() => sumc.Sum(Data_Global));
+            Thread th4 = new Thread(() => sumc.Sum(Data_Global));
+
+            /* Start */
+            Console.Write("\n\nWorking...");
+            sw.Start();
+
+            th1.Start();
+            th2.Start();
+            th3.Start();
+            th4.Start();
+
+            th1.Join();
+            th2.Join();
+            th3.Join();
+            th4.Join();
+
+            sw.Stop();
+            Console.WriteLine("Done.");
+
+            /* Result */
+            Console.WriteLine("Summation result: {0}", sumc.SumGlobal);
+            Console.WriteLine("Time used: " + sw.ElapsedMilliseconds.ToString() + "ms");
+        }
+    }
+}
+
+```
+
+#### Mo's Runtime
+
+- Summation result: 888701676
+- Time used: 42736ms
+
+## Version 5
+
+แก้ไขของ version 4 โดยใช้วิธีจาก version 2 แยก index ให้แต่ละ thread ทำเลย
+
+
+```
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+
+namespace Problem01
+{
+    class Summation
+    {
+        private object myLocker = new object();
+        static long Sum_Global = 0;
+        // static int G_index = 0;
+
+        public long SumGlobal // Encapsulation
+        {
+            get { return Sum_Global; }
+            set { Sum_Global = value; }
+        }
+
+        public void Sum(int startIndex, int stopIndex, byte[] Data_Global)
+        {
+            while(startIndex < stopIndex)
+            {
+                lock(myLocker)
+                {
+                    if (Data_Global[startIndex] % 2 == 0)
+                    {
+                          Sum_Global -= Data_Global[startIndex];
+                    }
+                    else if (Data_Global[startIndex] % 3 == 0)
+                    {
+                          Sum_Global += (Data_Global[startIndex] * 2);
+                    }
+                    else if (Data_Global[startIndex] % 5 == 0)
+                    {
+                          Sum_Global += (Data_Global[startIndex] / 2);
+                    }
+                    else if (Data_Global[startIndex] % 7 == 0)
+                    {
+                          Sum_Global += (Data_Global[startIndex] / 3);
+                    }
+                    Data_Global[startIndex] = 0;
+                    startIndex++;
+                }
+            }
+        }
+    }
+
+    class Program
+    {
+        static byte[] Data_Global = new byte[1000000000];
+
+        // static int G_index = 0;
+
+
+        static int ReadData()
+        {
+            int returnData = 0;
+            FileStream fs = new("Problem01.dat", FileMode.Open);
+            BinaryFormatter bf = new();
+
+            try
+            {
+                Data_Global = (byte[])bf.Deserialize(fs);
+            }
+            catch (SerializationException se)
+            {
+                Console.WriteLine("Read Failed:" + se.Message);
+                returnData = 1;
+            }
+            finally
+            {
+                fs.Close();
+            }
+
+            return returnData;
+        }
+
+        static void Main(string[] args)
+        {
+            Stopwatch sw = new();
+            Summation sumc = new();
+
+            int y;
+            /* Read data from file */
+            Console.Write("Data read...");
+            y = ReadData();
+            if (y == 0)
+            {
+                Console.WriteLine("Complete.");
+            }
+            else
+            {
+                Console.WriteLine("Read Failed!");
+            }
+
+            Thread th1 = new Thread(() => sumc.Sum(0, 250000000,Data_Global));
+            Thread th2 = new Thread(() => sumc.Sum(250000000, 500000000,Data_Global));
+            Thread th3 = new Thread(() => sumc.Sum(500000000, 750000000,Data_Global));
+            Thread th4 = new Thread(() => sumc.Sum(750000000, 1000000000,Data_Global));
+
+            /* Start */
+            Console.Write("\n\nWorking...");
+            sw.Start();
+
+            th1.Start();
+            th2.Start();
+            th3.Start();
+            th4.Start();
+
+            th1.Join();
+            th2.Join();
+            th3.Join();
+            th4.Join();
+
+            sw.Stop();
+            Console.WriteLine("Done.");
+
+            /* Result */
+            Console.WriteLine("Summation result: {0}", sumc.SumGlobal);
+            Console.WriteLine("Time used: " + sw.ElapsedMilliseconds.ToString() + "ms");
+        }
+    }
+}
+
+```
+#### Mo's Runtime
+- Summation result: 888701676
+- Time used: 41659ms
