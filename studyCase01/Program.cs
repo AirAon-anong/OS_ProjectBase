@@ -7,11 +7,73 @@ using System.Threading;
 
 namespace Problem01
 {
+    class Summation
+    {
+        private object myLocker = new object();
+        static long Sum_Global = 0;
+        static int G_index = 0;
+
+        public long SumGlobal // Encapsulation
+        {
+            get { return Sum_Global; }
+            set { Sum_Global = value; }
+        }
+
+        public void Sum(byte[] Data_Global)
+        {
+            while(G_index < 1000000000)
+            {
+                lock(myLocker)
+                {
+                    if (G_index < 1000000000)
+                    {
+                        if (Data_Global[G_index] % 2 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global -= Data_Global[G_index];
+                            }
+
+                        }
+                        else if (Data_Global[G_index] % 3 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global += (Data_Global[G_index] * 2);
+                            }
+
+                        }
+                        else if (Data_Global[G_index] % 5 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global += (Data_Global[G_index] / 2);
+                            }
+
+                        }
+                        else if (Data_Global[G_index] % 7 == 0)
+                        {
+                            if (G_index < 1000000000)
+                            {
+                              Sum_Global += (Data_Global[G_index] / 3);
+                            }
+
+                        }
+                        Data_Global[G_index] = 0;
+                        G_index++;
+                    }
+
+                }
+            }
+        }
+    }
+
     class Program
     {
         static byte[] Data_Global = new byte[1000000000];
-        static long Sum_Global = 0;
+
         // static int G_index = 0;
+
 
         static int ReadData()
         {
@@ -35,43 +97,13 @@ namespace Problem01
 
             return returnData;
         }
-        static void Sum(int startIndex, int stopIndex)
-        {
-            int result = 0;
 
-            while(startIndex < stopIndex)
-            {
-              if (Data_Global[startIndex] % 2 == 0)
-              {
-                  result -= Data_Global[startIndex];
-
-              }
-              else if (Data_Global[startIndex] % 3 == 0)
-              {
-                  result += (Data_Global[startIndex] * 2);
-
-              }
-              else if (Data_Global[startIndex] % 5 == 0)
-              {
-                  result += (Data_Global[startIndex] / 2);
-
-              }
-              else if (Data_Global[startIndex] % 7 == 0)
-              {
-                  result += (Data_Global[startIndex] / 3);
-              }
-              Data_Global[startIndex] = 0;
-              startIndex++;
-
-
-            }
-            Sum_Global += result;
-        }
         static void Main(string[] args)
         {
             Stopwatch sw = new();
-            int y;
+            Summation sumc = new();
 
+            int y;
             /* Read data from file */
             Console.Write("Data read...");
             y = ReadData();
@@ -83,10 +115,12 @@ namespace Problem01
             {
                 Console.WriteLine("Read Failed!");
             }
-            Thread th1 = new Thread(() => Sum(0, 250000000));
-            Thread th2 = new Thread(() => Sum(250000000, 500000000));
-            Thread th3 = new Thread(() => Sum(500000000, 750000000));
-            Thread th4 = new Thread(() => Sum(750000000, 1000000000));
+
+            Thread th1 = new Thread(() => sumc.Sum(Data_Global));
+            Thread th2 = new Thread(() => sumc.Sum(Data_Global));
+            Thread th3 = new Thread(() => sumc.Sum(Data_Global));
+            Thread th4 = new Thread(() => sumc.Sum(Data_Global));
+
             /* Start */
             Console.Write("\n\nWorking...");
             sw.Start();
@@ -105,7 +139,7 @@ namespace Problem01
             Console.WriteLine("Done.");
 
             /* Result */
-            Console.WriteLine("Summation result: {0}", Sum_Global);
+            Console.WriteLine("Summation result: {0}", sumc.SumGlobal);
             Console.WriteLine("Time used: " + sw.ElapsedMilliseconds.ToString() + "ms");
         }
     }
