@@ -68,8 +68,8 @@ sw.Stop();
 ```
 
 #### Mo's Runtime
-- Summation result: 888701676
-- Time used: 20887ms
+- Summation result: 222799230
+- Time used: 10511ms
 
 ## Version 2 (Wrong Answer, Less time)
 Dynamic Threading
