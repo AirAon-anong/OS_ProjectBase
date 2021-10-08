@@ -45,30 +45,31 @@ namespace Problem01
         static void Sum(int startIndex, int stopIndex)
         {
             checkCount++;
-
+            int result = 0;
             while(startIndex < stopIndex)
             {
               if (Data_Global[startIndex] % 2 == 0)
               {
-                  Sum_Global -= Data_Global[startIndex];
+                  result -= Data_Global[startIndex];
               }
               else if (Data_Global[startIndex] % 3 == 0)
               {
-                  Sum_Global += (Data_Global[startIndex] * 2);
+                  result += (Data_Global[startIndex] * 2);
               }
               else if (Data_Global[startIndex] % 5 == 0)
               {
-                  Sum_Global += (Data_Global[startIndex] / 2);
+                  result += (Data_Global[startIndex] / 2);
               }
               else if (Data_Global[startIndex] % 7 == 0)
               {
-                  Sum_Global += (Data_Global[startIndex] / 3);
+                  result += (Data_Global[startIndex] / 3);
               }
               Data_Global[startIndex] = 0;
               startIndex++;
             }
             processedCounter++;
             workingCounter--;
+            Sum_Global += result;
         }
         static void Main(string[] args)
         {

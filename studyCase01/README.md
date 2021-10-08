@@ -517,3 +517,79 @@ namespace Problem01
 #### Mo's Runtime
 - Summation result: 888701676
 - Time used: 41659ms
+
+## Version 6 (Right Answer, Less time)
+Dynamic Threading local variable
+
+สมมติฐาน : ใช้สมมติฐานจาก version 2 และ 3 มารวมกัน เนื่องจาก version 2 ช่วยให้ทำงานเร็วขึ้นและ version 3 ทำให้ผลถูกต้อง ถ้าเอาสอง version นี้มารวมกันอาจจะทำงานได้เร็วขึ้น
+
+ผลที่ได้คือ : ลดเวลาได้ และทำงานถูกต้อง
+
+```
+static int checkCount = 0;
+static int processedCounter = 0;
+static int workingCounter = 0;
+const int workingLimit = 10;
+const int THREADINDEX_LIMIT = 10000000;
+static int currentIndex = 0;
+
+static void Sum(int startIndex, int stopIndex)
+{
+    checkCount++;
+    int result = 0;
+    while(startIndex < stopIndex)
+    {
+      if (Data_Global[startIndex] % 2 == 0)
+      {
+          result -= Data_Global[startIndex];
+      }
+      else if (Data_Global[startIndex] % 3 == 0)
+      {
+          result += (Data_Global[startIndex] * 2);
+      }
+      else if (Data_Global[startIndex] % 5 == 0)
+      {
+          result += (Data_Global[startIndex] / 2);
+      }
+      else if (Data_Global[startIndex] % 7 == 0)
+      {
+          result += (Data_Global[startIndex] / 3);
+      }
+      Data_Global[startIndex] = 0;
+      startIndex++;
+    }
+    processedCounter++;
+    workingCounter--;
+    Sum_Global += result;
+}
+```
+
+```
+sw.Start();
+
+while(currentIndex < 1000000000)
+{
+    //wait for free limit...
+    while (workingCounter >= workingLimit)
+    {
+        Thread.Sleep(1);
+    }
+    workingCounter += 1;
+    Thread th = new Thread(() => Sum( currentIndex , currentIndex + THREADINDEX_LIMIT ));
+    th.Start();
+    Thread.Sleep(1);
+    currentIndex += THREADINDEX_LIMIT;
+
+
+}
+while (processedCounter < checkCount)
+{
+    Thread.Sleep(1);
+}
+
+sw.Stop();
+```
+
+#### Mo's Runtime
+- Summation result: 888701676
+- Time used: 4784ms
