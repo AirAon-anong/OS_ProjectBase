@@ -21,25 +21,25 @@ namespace Problem01
 
         public void Sum(int startIndex, int stopIndex, byte[] Data_Global)
         {
-            while (startIndex < stopIndex)
+            while(startIndex < stopIndex)
             {
-                lock (myLocker)
+                lock(myLocker)
                 {
                     if (Data_Global[startIndex] % 2 == 0)
                     {
-                        Sum_Global -= Data_Global[startIndex];
+                          Sum_Global -= Data_Global[startIndex];
                     }
                     else if (Data_Global[startIndex] % 3 == 0)
                     {
-                        Sum_Global += (Data_Global[startIndex] * 2);
+                          Sum_Global += (Data_Global[startIndex] * 2);
                     }
                     else if (Data_Global[startIndex] % 5 == 0)
                     {
-                        Sum_Global += (Data_Global[startIndex] / 2);
+                          Sum_Global += (Data_Global[startIndex] / 2);
                     }
                     else if (Data_Global[startIndex] % 7 == 0)
                     {
-                        Sum_Global += (Data_Global[startIndex] / 3);
+                          Sum_Global += (Data_Global[startIndex] / 3);
                     }
                     Data_Global[startIndex] = 0;
                     startIndex++;
@@ -77,7 +77,35 @@ namespace Problem01
 
             return returnData;
         }
-
+        static void Sum(int startIndex, int stopIndex)
+        {
+            checkCount++;
+            int result = 0;
+            while(startIndex < stopIndex)
+            {
+              if (Data_Global[startIndex] % 2 == 0)
+              {
+                  result -= Data_Global[startIndex];
+              }
+              else if (Data_Global[startIndex] % 3 == 0)
+              {
+                  result += (Data_Global[startIndex] * 2);
+              }
+              else if (Data_Global[startIndex] % 5 == 0)
+              {
+                  result += (Data_Global[startIndex] / 2);
+              }
+              else if (Data_Global[startIndex] % 7 == 0)
+              {
+                  result += (Data_Global[startIndex] / 3);
+              }
+              Data_Global[startIndex] = 0;
+              startIndex++;
+            }
+            processedCounter++;
+            workingCounter--;
+            Sum_Global += result;
+        }
         static void Main(string[] args)
         {
             Stopwatch sw = new();
@@ -96,10 +124,10 @@ namespace Problem01
                 Console.WriteLine("Read Failed!");
             }
 
-            Thread th1 = new Thread(() => sumc.Sum(0, 250000000, Data_Global));
-            Thread th2 = new Thread(() => sumc.Sum(250000000, 500000000, Data_Global));
-            Thread th3 = new Thread(() => sumc.Sum(500000000, 750000000, Data_Global));
-            Thread th4 = new Thread(() => sumc.Sum(750000000, 1000000000, Data_Global));
+            Thread th1 = new Thread(() => sumc.Sum(0, 250000000,Data_Global));
+            Thread th2 = new Thread(() => sumc.Sum(250000000, 500000000,Data_Global));
+            Thread th3 = new Thread(() => sumc.Sum(500000000, 750000000,Data_Global));
+            Thread th4 = new Thread(() => sumc.Sum(750000000, 1000000000,Data_Global));
 
             /* Start */
             Console.Write("\n\nWorking...");
